@@ -6,6 +6,7 @@ import androidx.core.view.GestureDetectorCompat;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -128,6 +129,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             SeekBar seekBarInToast = layout.findViewById(R.id.seekBarInToast);
             TextView textViewInToast = layout.findViewById(R.id.textViewinToast);
 
+            seekBarInToast.setProgress(seekBar.getProgress());
+            textViewInToast.setText(Integer.toString(seekBar.getProgress()));
+
             Toast toast = new Toast(this);
             toast.setGravity(Gravity.BOTTOM, 0, 0);
             toast.setDuration(Toast.LENGTH_LONG);
@@ -158,7 +162,30 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                                 }
                             });
             snackbar.show();
+
             return super.onDoubleTap(e);
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e){
+            Log.d("Index:",Integer.toString(index));
+            index++;
+            imageView.setImageResource((Integer)movieData.getItem(index).get("image"));
+            Snackbar snackbar=Snackbar.make(imageView, "Image Changed",Snackbar.LENGTH_LONG)
+                    .setAction("UNDO", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            index--;
+                            if(index < 0){
+                                index=29;
+                            }
+                            imageView.setImageResource((Integer)movieData.getItem(index).get("image"));
+                        }
+                    });
+            snackbar.show();
+            if(index >= 29){
+                index = -1; //This will show 0 image after the ++
+            }
         }
     }
 }
